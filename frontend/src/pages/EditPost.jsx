@@ -10,6 +10,7 @@ function EditPost() {
   const [topic, setTopic] = useState("Chung");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
   useEffect(() => {
     setLoading(true);
@@ -27,13 +28,26 @@ function EditPost() {
       });
   }, [id]);
 
+  useEffect(() => {
+    if (toast.show) {
+      const timer = setTimeout(() => {
+        setToast({ show: false, message: '', type: 'success' });
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast.show]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await updatePost(id, { title, content, topic });
-      navigate(`/post/${id}`);
+      setToast({ show: true, message: 'Cập nhật bài viết thành công!', type: 'success' });
+      setTimeout(() => {
+        navigate(`/post/${id}`, { state: { fromEdit: true } });
+      }, 2000);
     } catch (err) {
       console.error(err);
+      setToast({ show: true, message: 'Có lỗi khi cập nhật bài viết', type: 'error' });
     }
   };
 
@@ -97,6 +111,22 @@ function EditPost() {
             </div>
           </form>
         </div>
+        {toast.show && (
+          <div style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            backgroundColor: toast.type === 'success' ? '#4CAF50' : '#f44336',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '5px',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+            zIndex: 1000,
+            animation: 'slideIn 0.3s ease-out'
+          }}>
+            {toast.message}
+          </div>
+        )}
       </div>
     </main>
   );

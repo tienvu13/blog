@@ -9,9 +9,9 @@ function PageFlip({ content, title }) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    // Chia nội dung thành các trang dựa trên số dòng (khoảng 18 dòng/trang)
+    // Chia nội dung thành các trang dựa trên số dòng (khoảng 15 dòng/trang)
     const lines = content.split('\n');
-    const linesPerPage = 18;
+    const linesPerPage = 15;
     const newPages = [];
     for (let i = 0; i < lines.length; i += linesPerPage) {
       newPages.push(lines.slice(i, i + linesPerPage).join('\n'));

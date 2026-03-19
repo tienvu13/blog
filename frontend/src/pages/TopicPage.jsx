@@ -37,7 +37,7 @@ function TopicPage() {
         </header>
 
         <div style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem' }}>
-          <button className="btn btn-outline-secondary" onClick={() => navigate(-1)}>
+          <button className="btn btn-outline-secondary" onClick={() => navigate("/")}>
             ← Quay lại
           </button>
         </div>

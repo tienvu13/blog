@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getPost, deletePost } from "../api/api";
 import PageFlip from "../components/PageFlip";
 
 function PostDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,6 +22,14 @@ function PostDetail() {
         setLoading(false);
       });
   }, [id]);
+
+  const handleBack = () => {
+    if (location.state?.fromEdit && post) {
+      navigate(`/topic/${encodeURIComponent(post.topic || 'Chung')}`);
+    } else {
+      navigate(-1);
+    }
+  };
 
   const handleDelete = async () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa bài viết này?")) {
@@ -44,7 +53,7 @@ function PostDetail() {
       <div className="page-container" style={{ position: 'relative', minHeight: 'calc(100vh - 72px)', width: '100%' }}>
         <PageFlip content={post.content} title={post.title} />
         <div style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 1001 }}>
-          <button className="btn btn-outline-secondary" onClick={() => navigate(-1)} style={{ marginRight: '0.5rem' }}>
+          <button className="btn btn-outline-secondary" onClick={handleBack} style={{ marginRight: '0.5rem' }}>
             Quay lại
           </button>
           <button className="btn btn-outline-primary" onClick={() => navigate(`/post/${id}/edit`)} style={{ marginRight: '0.5rem' }}>

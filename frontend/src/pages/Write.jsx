@@ -1,15 +1,25 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { createPost } from "../api/api"
 
 function Write(){
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const [topic, setTopic] = useState("Chung")
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' })
+
+  useEffect(() => {
+    if (toast.show) {
+      const timer = setTimeout(() => {
+        setToast({ show: false, message: '', type: 'success' })
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [toast.show])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!title.trim() || !content.trim()) {
-      alert("Vui lòng điền đủ thông tin bài viết")
+      setToast({ show: true, message: 'Vui lòng điền đủ thông tin bài viết', type: 'error' })
       return
     }
     const newPost = {
@@ -20,13 +30,13 @@ function Write(){
     }
     try {
       await createPost(newPost)
-      alert("Đăng bài thành công!")
+      setToast({ show: true, message: 'Đăng bài thành công!', type: 'success' })
       setTitle("")
       setContent("")
       setTopic("Chung")
     } catch (err) {
       console.log(err)
-      alert("Có lỗi khi đăng bài")
+      setToast({ show: true, message: 'Có lỗi khi đăng bài', type: 'error' })
     }
   }
 
@@ -77,6 +87,22 @@ function Write(){
             </button>
           </form>
         </div>
+        {toast.show && (
+          <div style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            backgroundColor: toast.type === 'success' ? '#4CAF50' : '#f44336',
+            color: 'white',
+            padding: '10px 20px',
+            borderRadius: '5px',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+            zIndex: 1000,
+            fontSize: '14px'
+          }}>
+            {toast.message}
+          </div>
+        )}
       </div>
     </main>
   )
